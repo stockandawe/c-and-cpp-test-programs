@@ -1,0 +1,88 @@
+Question #1:
+/*
+* ID is an opaque structure representing some identifier.
+* Two identifiers can be compared for equality.  This is
+* the only relation they satisfy.
+*/
+
+typedef struct ID* ID;
+
+/*
+* Equal compares the contents of a and b and returns 1
+* if they are equal and 0 otherwise.  Note that a != b && equal(a, b)
+* is possible.
+*/
+int equal(ID a, ID b);
+
+/*
+* poodle takes an array of IDs of length n and returns true
+* if and only if more than n/2 of the IDs are identical.
+* n is guaranteed to be a power of 2.
+*/
+int poodle(ID *ids, int n);
+
+/*
+ * Your task is to implement poodle.
+ */
+
+Question #2:
+/* Write an implementation for the following heap methods
+ * using a buddy allocator to manage the specified memory
+ */
+
+#include <unistd.h>
+#include <stdio.h>
+
+#define CHUNKSIZE 16 * 1024 * 1024
+
+typedef struct heap heap;
+
+struct heap {
+    /* heap state */
+};
+
+
+/* Returns an initialized heap state pointer. The memory for the
+ * heap structure should be allocated from the specified memory
+ */
+ heap *
+ heap_init(void *mem, long size)
+ {
+ }
+
+
+/* Returns a pointer a memory segment that can accomodate as least
+ * size number of bytes. On error, returns NULL
+ */
+ void *
+ heap_alloc(heap *h, long size)
+{
+}
+
+
+/* Return memory back to the heap
+ */
+ void
+ heap_free(heap *h, void *ptr)
+ {
+ }
+
+
+ int main()
+ {
+    void *mem;
+    heap *h;
+    mem = sbrk(CHUNKSIZE);
+
+    if (!mem) {
+        perror("sbrk");
+        return 1;
+    }
+
+
+    h = heap_init(mem, CHUNKSIZE);
+
+    /* calls to heap_alloc/heap_free */
+
+    return 0;
+}

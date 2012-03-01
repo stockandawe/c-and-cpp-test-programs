@@ -1,0 +1,469 @@
+	@(#)RELEASE_NOTES       e07@nikhef.nl (Eric Wassenaar) 991020
+
+	URL	ftp://ftp.nikhef.nl/pub/network/ping.tar.Z
+	URL	http://www.nikhef.nl/user/e07
+
+yymmdd		Description of changes per release
+CHANGES		Changes with respect to original utility
+TODO		Things that still need to be done
+WISHLIST	Wishes expressed by various people
+NOTES		Important issues to keep in mind
+
+# ----------------------------------------------------------------------
+# Description of changes per release
+# ----------------------------------------------------------------------
+
+991020
+	Portability fix.
+		An alignment problem could occur on 64-bit machines
+		for the `struct timeval' in the icmp packet.
+		From Havard Eidnes <Havard.Eidnes@runit.sintef.no>
+	Miscellaneous changes.
+		Add the package name when printing the version number.
+		Requested by Mike Sweger <mikesw@whiterose.net>
+
+990522
+	Minor portability changes.
+		AIX needs <sys/select.h>
+		Reported by Andreas Ley <andy@rz.uni-karlsruhe.de>
+	There are no functional changes in this release.
+
+990517
+	Fix bug in rtt reporting.
+		Certain ranges of rtt values were printed incorrectly.
+		Noted by Les Cottrell <cottrell@slac.stanford.edu>
+
+990511
+	Minor portability changes.
+		Solaris 2.7 defines `ipaddr_t'. Can you believe it.
+		Fix glitch for bsdi.
+		Noted by Paul Eggert <eggert@twinsun.com>
+	There are no functional changes in this release.
+
+990412
+	Allow setting of TOS.
+		The new option -T allows specifying an explicit tos
+		in the IP header of the ICMP echo packet. This has
+		effect only in case IP_TOS is defined on a platform.
+		On the HP-UX 10.* platform, IP_TOS is now defined, but
+		the corresponding setsockopt() always fails with either
+		"Permission denied" or "Operation not supported".
+		Requested by Les Cottrell <cottrell@slac.stanford.edu>
+
+	Linux socket options fix.
+		On the linux platform, the SO_xxx socket option codes
+		are not binary disjunct as they are on other platforms.
+		Reported by Martin Mares <mj@ucw.cz>
+
+980831
+	Raw IP portability fix.
+		The platforms which require the entire raw IP output
+		packet to be constructed in network byte order, also
+		return a raw IP input packet in network byte order.
+		Most other platforms adopt the BSD implementation
+		which handles some fields in machine byte order, and
+		performs the htons()/ntohs() conversion in the kernel.
+
+980828
+	Linux portability fix.
+		Whether the checksum in the struct ip is defined as
+		ip_sum or ip_csum does not seem to depend on the
+		kernel version after all. Assume it is ip_csum.
+		This is probably the case for non-glibc versions.
+		One can now overrule this via a flag in the Makefile.
+	The linux glibc chicken-and-egg problem.
+		If you have a __GLIBC__ version it would have been safe
+		to predefine _BSD_SOURCE so that <features.h> can select
+		the proper symbols such as __USE_BSD and __FAVOR_BSD.
+		However, __GLIBC__ does not seem to be defined until the
+		<features.h> file is invoked.
+		To avoid utter ugliness, one currently has to define the
+		symbol _BSD_SOURCE for those systems in the Makefile.
+		Everything then compiles out of the box.
+
+980228
+	Portability fix.
+		Certain platforms need an explicit SO_BROADCAST socket
+		option to allow broadcast pings.
+	Linux portability fix.
+		Certain distributions, most probably depending on the
+		version of the glibc package, come with the real BSD
+		netinet include files. This obsoletes the supplied
+		linux.h file with portability hacks.
+		One may have to define _BSD_SOURCE in the Makefile
+		(which turns on the __FAVOR_BSD flag) to enforce this.
+	Miscellaneous changes.
+		In quick mode, don't use the maximum timeout during
+		the final wait.
+
+980102
+	Linux portability fix.
+		Well-known names of members in well-known structures
+		keep changing all the time. Can you believe it.
+
+971217
+	Specify explicit source address.
+		Allow specification of own source address for multi-
+		homed hosts. This is done via the new -s command line
+		option, similar to the -s option in traceroute.
+		The old undocumented dummy -s option has disappeared.
+		Asked by Jens Voeckler <voeckler@rvs.uni-hannover.de>
+	Minor portability changes.
+		Identify SVR4 platforms depending on cpp symbols,
+		which are different for various compilers.
+
+971007
+	Reconsider heuristic to determine BIND release.
+		Some vendors still ship new BIND 4.9 releases that have
+		the old struct ``state'' instead of ``__res_state''.
+		This is now controlled via Makefile CONFIGDEFS.
+	There are no functional changes in this release.
+
+971001
+	Backward compatibility fix.
+		Some vendors still ship old BIND 4.9 releases that have
+		the old struct ``state'' instead of ``__res_state''.
+	Minor portability fixes.
+		Properly identify certain platforms in port.h to avoid
+		compiler warnings.
+	Miscellaneous changes.
+		Minor esthetical code changes.
+
+970828
+	Linux portability fixes.
+		On certain platforms the standard include files expect
+		the symbol __BSD_SOURCE whereas the compilers define
+		the symbol  _BSD_SOURCE instead.
+	Minor portability fixes.
+		Use explicit casts for ntohs()/htons() in a few places
+		to avoid compiler warnings on some platforms.
+	There are no functional changes in this release.
+
+970525
+	More linux portability changes.
+		Certain newer linux versions now define struct ip.
+		It remains unclear what the exact criteria are.
+		Move include of linux.h to a more appropriate place.
+
+961230
+	Port to linux platform.
+		Some additions were needed to the linux.h include file.
+		This file is now invoked by port.h if appropriate.
+		Tested by Larry Schwimmer <rosebud@cyclone.Stanford.EDU>
+	Portability issues.
+		Bypass bug in <netinet/ip.h> on alpha osf/1 platform.
+		From Larry Schwimmer <rosebud@cyclone.Stanford.EDU>
+	Optionally restrict special ping modes.
+		The special ping modes can be disallowed for ordinary
+		users via individual compile-time switches in conf.h
+		or all at once via a Makefile configuration definition.
+		Asked by Larry Schwimmer <rosebud@cyclone.Stanford.EDU>
+	Extra safety checks.
+		After a positive return from an ordinary gethostbyname
+		or gethostbyaddr we cannot be absolutely sure that the
+		size of the canonical h_name is within bounds.
+		Make timeval subtraction more robust.
+	Configurable defaults.
+		Make various default values configurable in conf.h
+	Miscellaneous changes.
+		Attempt to further reduce lint clutter. It is difficult
+		to eliminate this altogether. There are too many subtle
+		differences between various platforms.
+	More preparation for multi-target mode.
+		Add new code in preparation for multi-target mode a la
+		fping. Still not complete.
+
+960314
+	Add loose source route gateways.
+		New option -g to specify (possibly multiple) gateway
+		machines to define an explicit loose source route to
+		the target host. This works the same as in traceroute.
+	Check for available routing info.
+		If an IP options buffer is returned, make sure that it
+		contains routing info. Some hosts fail to insert routes.
+		Macintoshes sometimes fill the entire buffer with NOPs.
+	Configurable default options.
+		Use an environment variable PING_DEFAULTS to set
+		default options and parameters. These are interpolated
+		in front of the command line arguments before scanning.
+		Syntax is the same as the command line syntax.
+	Broadcast statistics.
+		Add more statistics for hosts during broadcast mode
+		(times are questionable because of extra overhead).
+	Broadcast address mask.
+		New option -b to specify the number of bits in the
+		network mask. Overrules the traditional class masks
+		when checking for a broadcast address.
+	New options.
+		Allow packet length and packet count to be specified
+		alternatively via new -l and -k options. Traditionally
+		they are given as extra parameters after the target.
+		Change the undocumented -T option to -w.
+	Allow MULTIPLE_IP_OPTIONS.
+		The default is now to allow multiple IP options.
+		We assume this is ok for most of today's routers.
+		Only for very old Cisco routers it should be turned off.
+	Miscellaneous changes.
+		Split large subroutines into more modular ones.
+		Reorganize several modules in preparation of multi-
+		target mode (a la fping).
+
+960303
+	Cache nameserver lookups.
+		DNS address-to-name translations are cached to avoid
+		excessive DNS queries. Use same code as in traceroute.
+		This allows to include full domain names in the output
+		for regular responses.
+	Adjust timeout for slow links.
+		If the round-trip time turns out to be larger than the
+		given timeout period, auto-adjust the timeout to avoid
+		injecting too many packets into the pipeline.
+		Suggested by Bela Lubkin <belal@sco.COM>
+		This feature is experimental and subject to change.
+		Change the text of the "no reply" messages to be less
+		confusing.
+	Set screen window size.
+		Initialize and dynamically update the window size of
+		the screen in cisco-ping mode.
+	Portability fixes.
+		Minor changes to run on SCO platforms.
+		SCO/OS5 comes with its own version of in_cksum().
+	Port to linux platform.
+		Add compatibility definitions in separate linux.h
+		header file. This file is not yet invoked, as it is
+		untested so far.
+
+951024
+	Correct various misspellings.
+	There are no functional changes in this release.
+
+951016
+	Enhance rtt statistics printout.
+		Add the standard deviation to the statistics summary.
+		Supply simple sqrt function to avoid linking with -lm.
+
+951015
+	Refine round-trip time reporting.
+		Print rtt appropriately in fractional milliseconds.
+		The number of printed digits depends on the value.
+		(Example:  0.123 ms  1.23 ms  12.3 ms  123 ms).
+		This can be useful for measuring very fast links,
+		but should be taken with a grain of salt on systems
+		with a poor clock resolution.
+	Miscellaneous changes.
+		Properly terminate stdout in special ping modes before
+		issuing a message to stderr, to improve readability.
+		Ensure rtt values don't cause overflow. This limits
+		their values to ~35 minutes. That seems sufficient.
+
+950930
+	Avoid potential alignment conflicts.
+		Allocate socket addresses of type struct sockaddr_in
+		instead of type struct sockaddr. The first one has
+		stricter alignment restrictions, although they have
+		the same size.
+	There are no functional changes in this release.
+
+950918
+	Disable all reverse DNS lookups in numeric mode.
+		The -n flag now also prevents a reverse lookup of a
+		numeric dotted quad address given on the command line.
+		This avoids a potential annoying nameserver timeout.
+
+950910
+	Enhance error reporting.
+		Keep track of ICMP messages that explicitly reject our
+		ping requests, such as host unreachable and the like.
+		They are generated by intermediate hosts in transit.
+		Such errors are reported, and statistics accumulated,
+		instead of ignoring them and finally timing out.
+	More IP packet dump printout.
+		In verbose mode, also print ICMP portion of IP packet,
+		not only TCP or UDP data.
+	Improve robustness.
+		Ensure all input packets are of sufficient size before
+		processing them. This was silently assumed when dumping
+		their contents in verbose mode.
+
+950805
+	Recognize new ICMP codes.
+		Some new ICMP packet types and ICMP_UNREACH subcodes are
+		now detected. The latest codes are defined by RFC 1812.
+		Suggested by Steinar Haug <Steinar.Haug@runit.sintef.no>
+	Minor changes.
+		Change capitalization and text in icmp header printout.
+
+950425
+	Multiple address support.
+		New option -a to probe all addresses of a multi-homed
+		host in succession. Requires some code reshuffling.
+		This makes the separate rping utility obsolete.
+	Ensure consistent exit code.
+		Return success code if any valid response was received,
+		and failure code if there were none.
+	Save/restore errno across interrupts.
+		This is necessary for those system calls which are
+		interrupted instead of restarted. It avoids stale
+		values in the regular mode code in case of certain
+		race conditions.
+	Add the RELEASE_NOTES file to explain changes.
+
+940704
+	General portability fixes.
+		Use predefined constants for fixed size entities.
+		Cannot rely on sizeof() for several structs on those
+		platforms which don't have 16 or 32 bit integers.
+		Adapt checksum algorithm to be more portable.
+	Minor changes.
+		Release root privileges when they are no longer needed.
+
+940306
+	Miscellaneous changes.
+		Word-align all 32-bit addresses in IP options buffer.
+		Check class D (multicast) and class E (reserved) address.
+	Broadcast improvements.
+		Keep track of different host responses in broadcast mode.
+
+940226
+	Loose source route support.
+		New option -L to enable loose source route mode.
+		Recognize option -l for compatibility with SUN ping.
+	Generalize IP options processing.
+		Restrict simultaneous use of more than one IP routing
+		option, unless allowed via an explicit compile switch.
+	Broadcast support.
+		Implement special processing for broadcast pings.
+		Restrict options if a broadcast address is specified.
+	Quick ping.
+		New option -Q for quick ping without statistics.
+	Minor enhancements.
+		Make messages during verbose packet reporting uniform.
+		Properly pluralize words in output messages.
+	Manual page revised and adapted to new features.
+
+940217
+	Complete overhaul of entire code. Various bugs fixed.
+		General portability hooks for various platforms.
+		Improved error reporting and timeout handling.
+		Corrected output print format depending on options.
+		Properly schedule next event in various modes.
+		More robust code in several places.
+	Redesign flow control to properly handle flood mode.
+		This ensures that packet loss figures are now reliable.
+	New option.
+		Undocumented option -T to set timeout in flood mode.
+
+940212
+	Portability changes.
+		Use setvbuf() if setlinebuf() is unavailable.
+	Minor enhancements.
+		Use float format to print percentage packet loss.
+		Suppress output in quiet flood mode.
+		Miscellaneous lint cleanup.
+	Various bug fixes.
+		Save hostname properly in sufficient static storage.
+		Correct checksum algorithm for odd bytecount.
+
+910926
+	Minor bug fix.
+		getopt() returns int instead of char.
+	Hack for special ethernet interface.
+		Put omninet (NC400) controller in promiscuous mode.
+		This is necessary for record route mode to work.
+
+# ----------------------------------------------------------------------
+# CHANGES
+# ----------------------------------------------------------------------
+
+Bugs fixed
+
+	Checksum algorithm.
+		The ICMP packet checksum was computed incorrectly
+		in case the packet contained an odd number of bytes.
+	Hostname storage.
+		The hostname as returned via gethostby{name,addr} was
+		pointing to internal storage which would be clobbered
+		by subsequent calls. Furthermore, MAXHOSTNAMELEN is
+		not sufficient to store fully qualified domain names.
+	Response printout.
+		The printing of the response messages was not always
+		according to the specified options.
+	Event scheduling.
+		The scheduling of new events and termination was not
+		always properly corresponding to the specified options.
+	Packet loss report.
+		Packet loss is now properly reported. Especially when
+		running in flood mode the figures were bogus.
+
+New features
+
+	Internal redesign.
+		Necessary to properly handle flood mode and broadcast.
+	Portability hooks.
+		New Makefile and header files to ease installation on
+		various platforms.
+	Loose source route.
+		Can be specified instead of, or in combination with,
+		record route. Handling of IP options is generalized.
+		See conf.h for potential conflicts with record route.
+	Broadcast support.
+		Added hooks to handle broadcast address in all modes.
+		Restrict the use of flood ping to the superuser when
+		a broadcast address is specified.
+	Quick ping.
+		Suppresses all output and quits when target is alive.
+	Ping all addresses.
+		Probe all addresses of a multi-homed destination host.
+	Recognize new ICMP codes.
+		New types and subcodes have been defined recently.
+	Improve robustness.
+		Don't assume that all input packets are of sufficient
+		size when decoding their contents.
+	Enhance error handling.
+		Recognize and act upon ICMP bounce messages and report
+		error conditions.
+	Refine round-trip time reporting.
+		Print rtt appropriately in fractional milliseconds,
+		in variable format (significant digits only).
+		Add the standard deviation to the statistics summary.
+	Update screen window size.
+		Maintain proper number of columns in cisco-ping mode.
+	Cache nameserver lookups.
+		Avoid multiple DNS queries for known IP addresses.
+	Adjust timeout for slow links.
+		Adapt the timeout value if it is too small compared to
+		the actual round-trip time.
+	Customizing default options.
+		Environment variables can be used to preset often used
+		options.
+	Loose source route gateways.
+		Define explicit loose source route to the target host.
+	Specify explicit source address.
+		Allow specification of own source address for multi-
+		homed hosts.
+
+# ----------------------------------------------------------------------
+# TODO
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# WISHLIST
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# NOTES
+# ----------------------------------------------------------------------
+
+	Timeout messages.
+		The "no reply" messages are just indicating that no
+		reply was received *within the given timeout period*.
+		They don't necessarily mean a lost packet.
+		You will see them if the target host is reachable via
+		a slow link and the given timeout value is less than
+		the actual round trip time.
+		As new packets are emitted and the pipe gets filled,
+		the messages will go away eventually (if the line has
+		a rather constant round-trip time).
+		The timeout period is now adjusted to cope with slow
+		and irregular lines.
+

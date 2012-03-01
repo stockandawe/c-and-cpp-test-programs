@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <limits.h>
+
+int main(void)
+{
+    printf("Max path is %d\n", PATH_MAX);
+    printf("File max is %d\n", NAME_MAX);
+
+    return 1;
+}

@@ -1,0 +1,4 @@
+#!/bin/csh
+
+telnet 10.3.0.94 < login
+

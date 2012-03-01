@@ -1,0 +1,5 @@
+#!/bin/csh
+cp /data/software/nms/latest/ElementManager/Linux/install_linux.bin ~rutul/
+cd
+install_linux.bin
+rm install_linux.bin

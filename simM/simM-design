@@ -1,0 +1,72 @@
+read up completely on:
+######################
+    -socket() programming
+    -fork()/execl() unix process management functions
+    -read up on ssh
+    -how to make a Makefile
+
+What tasks should simM do?
+##########################
+    -read argv and argc (number of node + dir of config & output files.
+    -open configuration files 1.cfg, 2.cfg.....N.cfg
+    -read all the information from the configuration files into a table
+     of structures:
+        struct {
+        int  node_identifier /* id or number of the node 1, 2, ...N */
+        char node_host[128]; /* this is runs_on field from the .cfg file */
+        int  x;              /* x co-ordinate */
+        int  y;              /* y co-odrinate */
+        int  temp_lo;        /* lo value of temp */
+        int  temp_hi;        /* hi value of temperature, if provided, otherwise 0 */
+        int  query_timer;    /* if provided, miliilseconds */
+        char query[128];     /* query of the form, min/max[x1,y1,x2,y2] */
+        int  listen_port_num;/* the port number that the ports is listening on */ 
+        } node_info;
+    -create socket(), bind() and listen() on a TCP port (e.g. port 20010)
+    -bootstrap the network:
+        for (i = 0; i < N; i++)
+        {
+            -ssh into node_info[i].node_host
+            -start node_process (explained later)
+            -send node_process: N, ip-addr of simM, port 20010.
+        }
+        
+    -After the nodes would have started the node_process, each will send a 
+     port number that they are listening on (listen_port_num). 
+    -After you receive from all node, write to simM.out (in the directory specified 
+     earlier:
+        sprintf(output_file, "%s/%s", dirname, "simM.out");
+        fp = fopen(output_file, "w");
+        for (i = 0; i < N; i++)
+        {
+            fprintf(fp, "%d %d\n", 
+                node_info[i].node_identifier, 
+                node_info[i].listen_port_num);
+        }
+    -configuring the nodes:
+        -send (using the send() socket command send to each node:
+            -x
+            -y
+            -query_timer
+            -query[]
+            -ip-addr, listen_port_num and x and y of all OTHER nodes
+
+What tasks should node_process do?
+###################################
+ 
+-This "process" would be run on a remote machine (node_host) as follows:
+    execl("node_process N ip-addr-of-simM 20010");
+
+-This process will:
+
+    Step 1: communicate with simM:
+        -create socket(), bind() on 2001N (where N is node_identifier)
+        -send() to ip-addr-of-simM 2001N
+        -listen()
+
+    Step 2: MAC layer
+        -TO BE DECIDED
+
+    Step 3: One-phase pull routing implementation.
+        -TO BE DECIDED
+    

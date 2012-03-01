@@ -1,0 +1,18 @@
+Remote File checks:
+
+# Unauthorized user:
+ copy config:srp-config.cfg  rutul:topspin@10.3.0.103:/data/home/edwin
+# Correct!
+
+ copy config:srp-config.cfg  rutul:topspin@10.3.0.103:/data/home/rutul
+ copy config:srp-config.cfg  rutul:topspin@10.3.0.103:/data/home/rutul/
+ copy config:srp-config.cfg  rutul:topspin@10.3.0.103:/data/home/rutul/CCC.cfg
+
+
+Local File Checks:
+copy  rutul:topspin@10.3.0.103:/data/home/rutul/AdventNet.exe config:big.cfg
+ copy  rutul:topspin@10.3.0.103:/data/home/rutul/AdventNet.exe config:big.cf
+copy  rutul:topspin@10.3.0.103:/data/home/rutul/AdventNet.exe syslog:sdfsdfds
+CLI#  copy  rutul:topspin@10.3.0.103:/data/home/rutul/AdventNet.exe image:sfdsf
+Error: Invalid image file name.
+

@@ -1,0 +1,65 @@
+#!/usr/bin/expect
+
+    
+
+proc cliId {} {
+
+    spawn telnet 10.3.102.36
+            expect {
+	       -re "Login:" { 
+                   send "super\r"
+                   sleep 1
+                   expect "Password:"
+                   send "super\r"
+	           sleep 1
+                   expect "Topspin-360>"
+		   return $spawn_id
+		}
+	    }
+}
+
+
+proc test { id cmd } {
+    
+     send -i $id "$cmd\r"
+     expect {
+	 -i $id "Topspin-360(config)#" {
+	 }
+
+	 -i $id "Error" {
+	     puts "CLI has error message."
+	 }
+
+	 timeout {
+	    puts "CLI timed out."
+	 }
+     }
+}
+
+puts "Telneting to to begin test ..."
+
+set startTest [cliId]
+send -i $startTest "enable\r"
+expect -i $startTest "CLI\#"
+send -i $startTest "config\r"
+expect -i $startTest "CLI(config)#"
+
+set counter 0
+set stopCounter 500
+
+puts "Creating $stopCounter static ARP's and deleting it repetitively ..."
+
+while {$counter < $stopCounter} {
+   test $startTest "arp ethernet 100.10.10.1 22:22:00:00:00:01 4/1\r"
+   test $startTest "no arp ethernet 100.10.10.1 4/1\r"
+
+   incr counter
+
+   if {$counter == $stopCounter} {
+      break
+   }
+}
+
+test $startTest "arp ethernet 100.10.10.1 22:22:00:00:00:01 4/1\r"
+close -i $startTest
+
